@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import dashboardillustration from "../assets/dashboardillustration.svg";
 import { Link } from "react-router";
 
+
 export default function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white flex flex-col">
