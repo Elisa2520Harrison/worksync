@@ -2,28 +2,17 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import dashboardillustration from "../assets/dashboardillustration.svg";
 import { Link } from "react-router";
-
+import Navbar from "../components/Navbar";
+import Register from "./Register";
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white flex flex-col">
-            {/* Navbar */}
-            <nav className="flex justify-between items-center p-6 backdrop-blur-md bg-white/10 shadow-lg">
-                <h1 className="text-3xl font-bold tracking-wide">WorkSync</h1>
-                <div className="space-x-6 text-lg">
-                    <a href="#features" className="hover:text-blue-200 transition">Features</a>
-                    <a href="#about" className="hover:text-blue-200 transition">About</a>
-                    <a href="#contact" className="hover:text-blue-200 transition">Contact</a>
-                   <Link to="/login">
-                  <button className="bg-white text-blue-700 font-semibold px-4 py-2 rounded-xl hover:bg-blue-200 transition">
-                        Login
-                    </button>
-                     </Link> 
-                </div>
-            </nav>
-
+        <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white flex flex-col pt-24">
+          
             {/* Hero Section */}
-            <section className="flex flex-col lg:flex-row items-center justify-between px-10 lg:px-20 flex-grow">
+            <section className="flex flex-col lg:flex-row items-center justify-between px-10 lg:px-20 flex-grow ">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -37,10 +26,10 @@ export default function Home() {
                         Manage tasks, leaves, and collaboration all in one place. WorkSync brings productivity and people together.
                     </p>
                     <div className="flex justify-center lg:justify-start">
-                        <button className="bg-blue-500 hover:bg-blue-400 text-white font-semibold px-6 py-3 flex items-center gap-2 rounded-2xl shadow-lg">
+                      <Link to="Register"> <button className="bg-blue-500 hover:bg-blue-400 text-white font-semibold px-6 py-3 flex items-center gap-2 rounded-2xl shadow-lg">
                             Get Started
                             <ArrowRight className="w-5 h-5" />
-                        </button>
+                        </button></Link>
 
                     </div>
                 </motion.div>
@@ -80,5 +69,6 @@ export default function Home() {
                 <p>© {new Date().getFullYear()} WorkSync. All rights reserved.</p>
             </footer>
         </div>
+        </>
     );
 }

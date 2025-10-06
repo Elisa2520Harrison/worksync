@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -38,6 +39,8 @@ export default function Register() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -95,5 +98,6 @@ export default function Register() {
         </p>
       </motion.div>
     </div>
+    </>
   );
 }
