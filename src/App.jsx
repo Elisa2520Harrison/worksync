@@ -21,4 +21,3 @@ const progressRouter = createBrowserRouter([
 export default function App() {
   return <RouterProvider router={progressRouter} />;
 }
-

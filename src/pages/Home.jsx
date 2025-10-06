@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import dashboardillustration from "../assets/dashboardillustration.svg";
+import { Link } from "react-router";
 
 export default function Home() {
     return (
@@ -12,9 +13,11 @@ export default function Home() {
                     <a href="#features" className="hover:text-blue-200 transition">Features</a>
                     <a href="#about" className="hover:text-blue-200 transition">About</a>
                     <a href="#contact" className="hover:text-blue-200 transition">Contact</a>
-                    <button className="bg-white text-blue-700 font-semibold px-4 py-2 rounded-xl hover:bg-blue-200 transition">
+                   <Link to="/login">
+                  <button className="bg-white text-blue-700 font-semibold px-4 py-2 rounded-xl hover:bg-blue-200 transition">
                         Login
                     </button>
+                     </Link> 
                 </div>
             </nav>
 
