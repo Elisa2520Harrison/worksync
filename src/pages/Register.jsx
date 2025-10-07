@@ -6,8 +6,7 @@ import Navbar from "../components/Navbar";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
+    username: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -22,16 +21,21 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://your-api-url.com/register", formData);
+      const response = await axios.post("http://localhost:4000/register", {
+        username: formData.username,
+        password: formData.password,
+      });
+
+      // The backend returns apiKey and jwt token
       const { apiKey, token } = response.data;
 
-      // Save securely
-      localStorage.setItem("x-api-key", apiKey);
-      localStorage.setItem("auth-token", token);
+      localStorage.setItem("apiKey", apiKey);
+      localStorage.setItem("token", token);
 
       alert("Registration successful!");
       navigate("/login");
     } catch (error) {
+      console.error("Registration failed:", error);
       alert(error.response?.data?.message || "Registration failed.");
     } finally {
       setLoading(false);
@@ -40,64 +44,54 @@ export default function Register() {
 
   return (
     <>
-    <Navbar />
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="bg-white/10 p-10 rounded-2xl shadow-2xl w-full max-w-md"
-      >
-        <h1 className="text-3xl font-bold mb-6 text-center">Create Account</h1>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="bg-white/10 p-10 rounded-2xl shadow-2xl w-full max-w-md"
+        >
+          <h1 className="text-3xl font-bold mb-6 text-center">Create Account</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
-          />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
+            />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
-          />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
-          />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-500 hover:bg-blue-400 font-semibold py-3 rounded-xl transition"
+            >
+              {loading ? "Creating Account..." : "Register"}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-400 font-semibold py-3 rounded-xl transition"
-          >
-            {loading ? "Creating Account..." : "Register"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm mt-6">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-300 hover:underline">
-            Login
-          </Link>
-        </p>
-      </motion.div>
-    </div>
+          <p className="text-center text-sm mt-6">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-300 hover:underline">
+              Login
+            </Link>
+          </p>
+        </motion.div>
+      </div>
     </>
   );
 }
