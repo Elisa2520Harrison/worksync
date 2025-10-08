@@ -21,14 +21,24 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:4000/register", {
-        username: formData.username,
-        password: formData.password,
-      });
+      // ✅ Use your deployed API base URL
+      const response = await axios.post(
+        "https://leave-management.devdigicoast.site/register",
+        {
+          username: formData.username,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // The backend returns apiKey and jwt token
+      // ✅ The backend returns apiKey and token
       const { apiKey, token } = response.data;
 
+      // Save credentials in localStorage
       localStorage.setItem("apiKey", apiKey);
       localStorage.setItem("token", token);
 
@@ -36,7 +46,13 @@ export default function Register() {
       navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
-      alert(error.response?.data?.message || "Registration failed.");
+      if (error.response) {
+        alert(error.response.data.message || "Registration failed on server.");
+      } else if (error.request) {
+        alert("Network error: Unable to connect to the server.");
+      } else {
+        alert("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
