@@ -62,7 +62,6 @@ export default function AdminRequests() {
     }
   }
 
-  // ✅ FIXED: Use correct endpoints for approve/reject
   async function approveLeave(id) {
     try {
       await axios.patch(
@@ -79,7 +78,7 @@ export default function AdminRequests() {
       fetchLeaves();
     } catch (err) {
       console.error("Error approving leave:", err);
-      alert("❌ Failed to approve leave");
+      alert(" Failed to approve leave");
     }
   }
 
@@ -101,7 +100,7 @@ export default function AdminRequests() {
       fetchLeaves();
     } catch (err) {
       console.error("Error rejecting leave:", err);
-      alert("❌ Failed to reject leave");
+      alert(" Failed to reject leave");
     }
   }
 

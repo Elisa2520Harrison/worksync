@@ -14,7 +14,6 @@ export default function UserLeaveRequests() {
   const token = localStorage.getItem("token");
   const apiKey = localStorage.getItem("apiKey");
 
-  // Decode JWT to check if user is admin
   const checkAdminStatus = () => {
     if (!token) return false;
     try {
@@ -173,7 +172,7 @@ export default function UserLeaveRequests() {
 
                       <td className="p-3">{leave.reason}</td>
 
-                      {/* ✅ Status Column */}
+                      {/*  Status Column */}
                       <td className="p-3 font-semibold">
                         <span
                           className={`px-2 py-1 rounded-lg text-sm ${
@@ -188,7 +187,7 @@ export default function UserLeaveRequests() {
                         </span>
                       </td>
 
-                      {/* ✅ Rejection Reason Column */}
+                      {/*  Rejection Reason Column */}
                       <td className="p-3 italic text-gray-600">
                         {leave.rejection_reason || "—"}
                       </td>

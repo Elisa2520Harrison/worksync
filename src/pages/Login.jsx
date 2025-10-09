@@ -10,6 +10,7 @@ export default function Login() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,7 +22,6 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // ✅ Use your live API URL
       const response = await axios.post(
         "https://leave-management.devdigicoast.site/auth/login",
         {
@@ -35,15 +35,13 @@ export default function Login() {
         }
       );
 
-      // ✅ Extract API key and token
       const { apiKey, token } = response.data;
 
-      // Save credentials locally
       localStorage.setItem("apiKey", apiKey);
       localStorage.setItem("token", token);
 
-      alert("Login successful!");
-      navigate("/leaves"); // redirect to main leave page
+      setSuccess(true); // ✅ Show popup
+      setTimeout(() => navigate("/leaves"), 2000); // ✅ Redirect after 2s
     } catch (error) {
       console.error("Login failed:", error);
       if (error.response) {
@@ -61,7 +59,19 @@ export default function Login() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white relative">
+        {/* Success Popup */}
+        {success && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="absolute top-5 bg-green-500 text-white px-5 py-3 rounded-xl shadow-lg font-semibold"
+          >
+            ✅ Login successful! Redirecting...
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -71,25 +81,35 @@ export default function Login() {
           <h1 className="text-3xl font-bold mb-6 text-center">Welcome Back</h1>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
-            />
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-white/90">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                placeholder="Enter username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 rounded-lg bg-white/20 placeholder-white/70 focus:outline-none"
-            />
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-white/90">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
 
             <button
               type="submit"
