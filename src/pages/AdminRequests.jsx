@@ -5,6 +5,8 @@ import Navbar from "../components/Navbar";
 export default function AdminRequests() {
   const [users, setUsers] = useState([]);
   const [leaves, setLeaves] = useState([]);
+  const [filteredLeaves, setFilteredLeaves] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "", role: "user" });
 
@@ -15,6 +17,15 @@ export default function AdminRequests() {
     fetchUsers();
     fetchLeaves();
   }, []);
+
+  useEffect(() => {
+    const filtered = leaves.filter(
+      (leave) =>
+        leave.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        leave.leaveType?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredLeaves(filtered);
+  }, [searchTerm, leaves]);
 
   async function fetchUsers() {
     try {
@@ -39,6 +50,7 @@ export default function AdminRequests() {
         },
       });
       setLeaves(res.data || []);
+      setFilteredLeaves(res.data || []);
     } catch (err) {
       console.error("Error fetching leaves:", err);
     }
@@ -108,14 +120,15 @@ export default function AdminRequests() {
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-blue-300 via-blue-400 to-blue-600 text-white p-6 mt-16">
-        <div className="max-w-6xl mx-auto space-y-10">
+        <div className="max-w-7xl mx-auto space-y-10">
+
           {/* ========== USER MANAGEMENT ========== */}
           <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
               <h2 className="text-2xl font-bold">👥 User Management</h2>
               <button
                 onClick={() => setShowForm(!showForm)}
-                className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg"
+                className="bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-lg font-medium"
               >
                 {showForm ? "Cancel" : "Add User"}
               </button>
@@ -124,41 +137,53 @@ export default function AdminRequests() {
             {showForm && (
               <form
                 onSubmit={handleCreateUser}
-                className="bg-blue-50 text-blue-800 p-4 rounded-xl mb-6"
+                className="bg-white text-blue-800 p-6 rounded-xl mb-6 shadow-lg"
               >
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <input
-                    type="text"
-                    placeholder="Username"
-                    className="p-2 border rounded-md flex-1"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    required
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    className="p-2 border rounded-md flex-1"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                  />
-                  <select
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="p-2 border rounded-md flex-1"
+                  <div className="flex flex-col flex-1">
+                    <label className="text-sm font-semibold mb-1">Username</label>
+                    <input
+                      type="text"
+                      placeholder="Enter username"
+                      className="p-2 border rounded-md"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col flex-1">
+                    <label className="text-sm font-semibold mb-1">Password</label>
+                    <input
+                      type="password"
+                      placeholder="Enter password"
+                      className="p-2 border rounded-md"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col flex-1">
+                    <label className="text-sm font-semibold mb-1">Role</label>
+                    <select
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      className="p-2 border rounded-md"
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-green-600 text-white px-6 py-2 rounded-lg mt-4 sm:mt-auto"
                   >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg">
                     Create
                   </button>
                 </div>
               </form>
             )}
 
-            <div className="bg-blue-50 text-blue-800 rounded-xl p-4 shadow-lg overflow-x-auto">
+            <div className="bg-white text-blue-800 rounded-xl p-4 shadow-lg overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-blue-100">
@@ -168,9 +193,9 @@ export default function AdminRequests() {
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-t border-blue-100">
+                    <tr key={user.id} className="border-t border-blue-100 hover:bg-blue-50">
                       <td className="p-3">{user.username}</td>
-                      <td className="p-3">{user.role}</td>
+                      <td className="p-3 capitalize">{user.role}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -181,7 +206,19 @@ export default function AdminRequests() {
           {/* ========== LEAVE MANAGEMENT ========== */}
           <div>
             <h2 className="text-2xl font-bold mb-4">📅 Leave Management</h2>
-            <div className="bg-blue-50 text-blue-800 rounded-xl p-4 shadow-lg overflow-x-auto">
+
+            {/* Search bar */}
+            <div className="mb-4 flex justify-end">
+              <input
+                type="text"
+                placeholder="Search by name or leave type..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="p-2 w-full sm:w-80 rounded-lg text-blue-800 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="bg-white text-blue-800 rounded-xl p-4 shadow-lg overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-blue-100">
@@ -193,8 +230,8 @@ export default function AdminRequests() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leaves.map((leave) => (
-                    <tr key={leave.id} className="border-t border-blue-100">
+                  {filteredLeaves.map((leave) => (
+                    <tr key={leave.id} className="border-t border-blue-100 hover:bg-blue-50">
                       <td className="p-3">{leave.employeeName}</td>
                       <td className="p-3">{leave.leaveType}</td>
                       <td
@@ -211,22 +248,29 @@ export default function AdminRequests() {
                       <td className="p-3">
                         {leave.startDate} → {leave.endDate}
                       </td>
-                      <td className="p-3 flex gap-2 justify-center">
+                      <td className="p-3 flex gap-2 justify-center flex-wrap">
                         <button
                           onClick={() => approveLeave(leave.id)}
-                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg"
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => rejectLeave(leave.id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
                         >
                           Reject
                         </button>
                       </td>
                     </tr>
                   ))}
+                  {filteredLeaves.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="text-center p-4 text-blue-600">
+                        No leave requests found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
