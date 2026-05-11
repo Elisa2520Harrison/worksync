@@ -21,15 +21,15 @@ export default function AdminRequests() {
   useEffect(() => {
     const filtered = leaves.filter(
       (leave) =>
-        leave.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        leave.leaveType?.toLowerCase().includes(searchTerm.toLowerCase())
+        leave.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        leave.status?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredLeaves(filtered);
   }, [searchTerm, leaves]);
 
   async function fetchUsers() {
     try {
-      const res = await axios.get("https://leave-management.devdigicoast.site/users", {
+      const res = await axios.get("https://69fb38d588a7af0ecca8c3e7.mockapi.io/users", {
         headers: {
           "x-api-key": apiKey,
           Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ export default function AdminRequests() {
 
   async function fetchLeaves() {
     try {
-      const res = await axios.get("https://leave-management.devdigicoast.site/leaves", {
+      const res = await axios.get("https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves", {
         headers: {
           "x-api-key": apiKey,
           Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ export default function AdminRequests() {
   async function handleCreateUser(e) {
     e.preventDefault();
     try {
-      await axios.post("https://leave-management.devdigicoast.site/users", formData, {
+      await axios.post("https://69fb38d588a7af0ecca8c3e7.mockapi.io/users", formData, {
         headers: {
           "x-api-key": apiKey,
           Authorization: `Bearer ${token}`,
@@ -76,9 +76,9 @@ export default function AdminRequests() {
 
   async function approveLeave(id) {
     try {
-      await axios.patch(
-        `https://leave-management.devdigicoast.site/leaves/${id}/approve`,
-        {},
+      await axios.put(
+        `https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves/${id}`,
+        { status: "approved" },
         {
           headers: {
             "x-api-key": apiKey,
@@ -90,7 +90,7 @@ export default function AdminRequests() {
       fetchLeaves();
     } catch (err) {
       console.error("Error approving leave:", err);
-      alert(" Failed to approve leave");
+      alert("Failed to approve leave");
     }
   }
 
@@ -98,9 +98,9 @@ export default function AdminRequests() {
     const reason = prompt("Enter reason for rejection:");
     if (!reason) return;
     try {
-      await axios.patch(
-        `https://leave-management.devdigicoast.site/leaves/${id}/reject`,
-        { reason },
+      await axios.put(
+        `https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves/${id}`,
+        { status: "rejected", rejectReason: reason },
         {
           headers: {
             "x-api-key": apiKey,
@@ -112,7 +112,7 @@ export default function AdminRequests() {
       fetchLeaves();
     } catch (err) {
       console.error("Error rejecting leave:", err);
-      alert(" Failed to reject leave");
+      alert("Failed to reject leave");
     }
   }
 
@@ -122,7 +122,7 @@ export default function AdminRequests() {
       <div className="min-h-screen bg-gradient-to-b from-blue-300 via-blue-400 to-blue-600 text-white p-6 mt-16">
         <div className="max-w-7xl mx-auto space-y-10">
 
-          {/* ========== USER MANAGEMENT ========== */}
+          {/* USER MANAGEMENT */}
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
               <h2 className="text-2xl font-bold">👥 User Management</h2>
@@ -203,15 +203,14 @@ export default function AdminRequests() {
             </div>
           </div>
 
-          {/* ========== LEAVE MANAGEMENT ========== */}
+          {/* LEAVE MANAGEMENT */}
           <div>
             <h2 className="text-2xl font-bold mb-4">📅 Leave Management</h2>
 
-            {/* Search bar */}
             <div className="mb-4 flex justify-end">
               <input
                 type="text"
-                placeholder="Search by name or leave type..."
+                placeholder="Search by reason or status..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="p-2 w-full sm:w-80 rounded-lg text-blue-800 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -223,7 +222,7 @@ export default function AdminRequests() {
                 <thead>
                   <tr className="bg-blue-100">
                     <th className="p-3">Employee</th>
-                    <th className="p-3">Type</th>
+                    <th className="p-3">Reason</th>
                     <th className="p-3">Status</th>
                     <th className="p-3">Date Range</th>
                     <th className="p-3 text-center">Action</th>
@@ -232,13 +231,13 @@ export default function AdminRequests() {
                 <tbody>
                   {filteredLeaves.map((leave) => (
                     <tr key={leave.id} className="border-t border-blue-100 hover:bg-blue-50">
-                      <td className="p-3">{leave.employeeName}</td>
-                      <td className="p-3">{leave.leaveType}</td>
+                      <td className="p-3">{leave.userId || "User"}</td>
+                      <td className="p-3">{leave.reason}</td>
                       <td
                         className={`p-3 font-semibold ${
-                          leave.status === "Approved"
+                          leave.status === "approved"
                             ? "text-green-600"
-                            : leave.status === "Rejected"
+                            : leave.status === "rejected"
                             ? "text-red-600"
                             : "text-yellow-600"
                         }`}
@@ -249,18 +248,22 @@ export default function AdminRequests() {
                         {leave.startDate} → {leave.endDate}
                       </td>
                       <td className="p-3 flex gap-2 justify-center flex-wrap">
-                        <button
-                          onClick={() => approveLeave(leave.id)}
-                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
-                        >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => rejectLeave(leave.id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
-                        >
-                          Reject
-                        </button>
+                        {leave.status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => approveLeave(leave.id)}
+                              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => rejectLeave(leave.id)}
+                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}

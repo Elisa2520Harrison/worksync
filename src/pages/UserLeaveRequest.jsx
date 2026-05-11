@@ -35,8 +35,8 @@ export default function UserLeaveRequests() {
     try {
       setLoading(true);
       const endpoint = adminStatus
-        ? "https://leave-management.devdigicoast.site/leaves"
-        : "https://leave-management.devdigicoast.site/leaves/mine";
+        ? "https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves"
+        : "https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves/mine";
 
       const res = await axios.get(endpoint, {
         headers: {
@@ -61,7 +61,7 @@ export default function UserLeaveRequests() {
   async function updateStatus(id) {
     try {
       await axios.patch(
-        `https://leave-management.devdigicoast.site/leaves/${id}/approve`,
+        `https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves/${id}/approve`,
         {},
         {
           headers: {

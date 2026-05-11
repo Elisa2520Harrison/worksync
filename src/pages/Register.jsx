@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
+console.log("REGISTER FILE LOADED");
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Register() {
   const [formData, setFormData] = useState({
     username: "",
@@ -19,33 +23,54 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+   console.log("SUBMIT CLICKED");
+    if (!formData.username || !formData.password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // 🔍 Check if user already exists (MockAPI workaround)
+      const existingUsers = await axios.get(`${API_URL}/users`);
+      const userExists = existingUsers.data.find(
+        (u) => u.username === formData.username
+      );
+
+      if (userExists) {
+        alert("Username already exists");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Create new user
       const response = await axios.post(
-        "https://leave-management.devdigicoast.site/register",
+        `${API_URL}/users`,
         {
           username: formData.username,
           password: formData.password,
         },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
-      const { apiKey, token } = response.data;
-      localStorage.setItem("apiKey", apiKey);
-      localStorage.setItem("token", token);
+      const { id } = response.data;
 
-      setSuccess(true); 
-      setTimeout(() => navigate("/login"), 2000); // ✅ Redirect after 2s
+      // 🔐 Mock auth values
+      localStorage.setItem("userId", id);
+      localStorage.setItem("apiKey", "mock-key-" + id);
+      localStorage.setItem("token", "mock-token-" + id);
+
+      setSuccess(true);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (error) {
       console.error("Registration failed:", error);
-      if (error.response) {
-        alert(error.response.data.message || "Registration failed on server.");
-      } else if (error.request) {
-        alert("Network error: Unable to connect to the server.");
-      } else {
-        alert("An unexpected error occurred.");
-      }
+      alert("Something went wrong. Try again.");
     } finally {
       setLoading(false);
     }

@@ -22,35 +22,28 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://leave-management.devdigicoast.site/auth/login",
-        {
-          username: formData.username,
-          password: formData.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await axios.get(
+        "https://69fb38d588a7af0ecca8c3e7.mockapi.io/users"
       );
 
-      const { apiKey, token } = response.data;
+      const users = response.data;
+      const user = users.find(
+        (u) => u.username === formData.username && u.password === formData.password
+      );
 
-      localStorage.setItem("apiKey", apiKey);
-      localStorage.setItem("token", token);
+      if (user) {
+        localStorage.setItem("apiKey", "mock-key-" + user.id);
+        localStorage.setItem("token", "mock-token-" + user.id);
+        localStorage.setItem("userId", user.id);
 
-      setSuccess(true); // ✅ Show popup
-      setTimeout(() => navigate("/leaves"), 2000); // ✅ Redirect after 2s
+        setSuccess(true);
+        setTimeout(() => navigate("/leaves"), 2000);
+      } else {
+        alert("Invalid username or password");
+      }
     } catch (error) {
       console.error("Login failed:", error);
-      if (error.response) {
-        alert(error.response.data.message || "Login failed on server.");
-      } else if (error.request) {
-        alert("Network error: Unable to reach the server.");
-      } else {
-        alert("An unexpected error occurred.");
-      }
+      alert("Network error: Unable to reach the server.");
     } finally {
       setLoading(false);
     }
@@ -60,7 +53,6 @@ export default function Login() {
     <>
       <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900 text-white relative">
-        {/* Success Popup */}
         {success && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -121,7 +113,7 @@ export default function Login() {
           </form>
 
           <p className="text-center text-sm mt-6">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="text-blue-300 hover:underline">
               Register
             </Link>

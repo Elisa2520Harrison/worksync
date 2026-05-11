@@ -13,6 +13,7 @@ export default function CreateLeaveModal({ onClose, onSuccess }) {
 
   const token = localStorage.getItem("token");
   const apiKey = localStorage.getItem("apiKey");
+  const userId = localStorage.getItem("userId");
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,12 +37,14 @@ export default function CreateLeaveModal({ onClose, onSuccess }) {
     setLoading(true);
     try {
       const payload = {
+        userId: userId,
         startDate: form.startDate,
         endDate: form.endDate,
         reason: `${form.type ? `[${form.type}] ` : ""}${form.reason}`,
+        status: "pending",
       };
 
-      await axios.post("https://leave-management.devdigicoast.site/leaves", payload, {
+      await axios.post("https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves", payload, {
         headers: {
           "Content-Type": "application/json",
           "x-api-key": apiKey,

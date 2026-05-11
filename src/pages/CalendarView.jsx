@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import enUS from "date-fns/locale/en-US"; // ✅ FIXED: use import, not require
+import enUS from "date-fns/locale/en-US"; 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Navbar from "../components/Navbar";
 
@@ -24,6 +24,7 @@ export default function CalendarView() {
 
   const token = localStorage.getItem("token");
   const apiKey = localStorage.getItem("apiKey");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     fetchLeaves();
@@ -31,15 +32,21 @@ export default function CalendarView() {
 
   async function fetchLeaves() {
     try {
-      const res = await axios.get(isAdmin ? "/api/v1/leave" : "/api/v1/leave/my", {
+      const url = isAdmin 
+        ? "https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves"
+        : `https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves?userId=${userId}`;
+      
+      const res = await axios.get(url, {
         headers: {
           "x-api-key": apiKey,
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const formatted = res.data.leaves.map((leave) => ({
-        title: `${leave.employeeName || "You"} — ${leave.type} (${leave.status})`,
+      const leavesArray = Array.isArray(res.data) ? res.data : [];
+      
+      const formatted = leavesArray.map((leave) => ({
+        title: `${leave.reason || "Leave"} (${leave.status})`,
         start: new Date(leave.startDate),
         end: new Date(leave.endDate),
         allDay: true,
@@ -77,9 +84,17 @@ export default function CalendarView() {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-blue-200 via-blue-300 to-blue-500 p-6 mt-16">
         <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-blue-700 mb-4">
-            Leave Calendar
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-blue-700">
+              Leave Calendar
+            </h2>
+            <button
+              onClick={() => setIsAdmin(!isAdmin)}
+              className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm"
+            >
+              {isAdmin ? "User View" : "Admin View"}
+            </button>
+          </div>
           <div className="h-[80vh]">
             <Calendar
               localizer={localizer}
