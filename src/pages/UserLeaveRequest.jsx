@@ -3,7 +3,9 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Plus, CheckCircle } from "lucide-react";
 import CreateLeaveModal from "../components/CreateLeaveModal";
-import Navbar from "../components/Navbar";
+import NavbarUser from "../components/NavbarUser";
+
+const API_URL = import.meta.env.VITE_API_URL; 
 
 export default function UserLeaveRequests() {
   const [leaves, setLeaves] = useState([]);
@@ -35,8 +37,8 @@ export default function UserLeaveRequests() {
     try {
       setLoading(true);
       const endpoint = adminStatus
-        ? "https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves"
-        : "https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves/mine";
+        ? "${API_URL}/leaves"
+        : "${API_URL}/leaves/mine";
 
       const res = await axios.get(endpoint, {
         headers: {
@@ -61,7 +63,7 @@ export default function UserLeaveRequests() {
   async function updateStatus(id) {
     try {
       await axios.patch(
-        `https://69fb38d588a7af0ecca8c3e7.mockapi.io/api/leaves/${id}/approve`,
+        "{API_URL}/leaves/${id}/approve",
         {},
         {
           headers: {
@@ -81,7 +83,7 @@ export default function UserLeaveRequests() {
   if (loading) {
     return (
       <>
-        <Navbar />
+        <NavbarUser />
         <div className="min-h-screen bg-gradient-to-b from-blue-300 via-blue-400 to-blue-600 text-white flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>

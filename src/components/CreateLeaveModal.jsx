@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 
+const API_URL = import.meta.env.VITE_API_URL;  
+
+
 export default function CreateLeaveModal({ onClose, onSuccess }) {
   const [form, setForm] = useState({
     type: "",
@@ -44,7 +47,7 @@ export default function CreateLeaveModal({ onClose, onSuccess }) {
         status: "pending",
       };
 
-      await axios.post("https://69fb38d588a7af0ecca8c3e7.mockapi.io/leaves", payload, {
+      await axios.post("${API_URL}/leaves", payload, {
         headers: {
           "Content-Type": "application/json",
           "x-api-key": apiKey,

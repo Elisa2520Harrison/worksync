@@ -32,7 +32,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      // 🔍 Check if user already exists (MockAPI workaround)
+      
       const existingUsers = await axios.get(`${API_URL}/users`);
       const userExists = existingUsers.data.find(
         (u) => u.username === formData.username
@@ -44,7 +44,7 @@ export default function Register() {
         return;
       }
 
-      // ✅ Create new user
+      // Create new user
       const response = await axios.post(
         `${API_URL}/users`,
         {
@@ -58,7 +58,7 @@ export default function Register() {
 
       const { id } = response.data;
 
-      // 🔐 Mock auth values
+      //  Mock auth values
       localStorage.setItem("userId", id);
       localStorage.setItem("apiKey", "mock-key-" + id);
       localStorage.setItem("token", "mock-token-" + id);

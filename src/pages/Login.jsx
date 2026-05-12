@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Login() {
   const [formData, setFormData] = useState({
     username: "",
@@ -23,7 +25,7 @@ export default function Login() {
 
     try {
       const response = await axios.get(
-        "https://69fb38d588a7af0ecca8c3e7.mockapi.io/users"
+        "${API_URL}/users"
       );
 
       const users = response.data;
