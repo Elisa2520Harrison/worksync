@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate, useLocation } from "react-router"
-import { Menu, X, User, Calendar, Settings, Logout, ChevronDown } from "lucide-react";
+import { Menu, X, User, Calendar, Settings, LogOut, ChevronDown } from "lucide-react";
 import { nav } from "framer-motion/client";
 
 

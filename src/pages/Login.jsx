@@ -25,7 +25,7 @@ export default function Login() {
 
     try {
       const response = await axios.get(
-        "${API_URL}/users"
+        `${API_URL}/users`
       );
 
       const users = response.data;
